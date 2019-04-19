@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.01" errors="0" skipped="0" tests="1" name="org.jpdna.grpchello.AppTest">
+<testsuite failures="0" time="0.003" errors="0" skipped="0" tests="1" name="org.jpdna.grpchello.AppTest">
   <properties>
     <property name="os.detected.version" value="4.14"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
@@ -72,5 +72,5 @@
     <property name="os.detected.release.like.fedora" value="true"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.01" classname="org.jpdna.grpchello.AppTest" name="testApp"/>
+  <testcase time="0.003" classname="org.jpdna.grpchello.AppTest" name="testApp"/>
 </testsuite>

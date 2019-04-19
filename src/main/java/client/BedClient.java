@@ -13,6 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dominic.example.bed.BedGrpc;
 import org.dominic.example.bed.BedStatus;
+import org.dominic.example.doors.doorsGrpc;
+import org.dominic.example.doors.LockRequest;
+import org.dominic.example.doors.LockResponse;
+import org.dominic.example.doors.Time;
+import org.dominic.example.occupancy.OccupancyGrpc;
+import org.dominic.example.occupancy.OccupancyRequest;
+import org.dominic.example.occupancy.OccupancyResponse;
+
 
 public class BedClient implements ServiceObserver {
 
@@ -20,26 +28,21 @@ public class BedClient implements ServiceObserver {
     protected ServiceDescription current;
     private final String serviceType;
     private final String name;
-    private static final Logger logger = Logger.getLogger(GRPCBedClient.class.getName());
+    private static final Logger logger = Logger.getLogger(BedClient.class.getName());
 
     private ManagedChannel channel;
     private BedGrpc.BedBlockingStub blockingStub;
-
-    /**
-     * Constructor.
-     */
+    private doorsGrpc.doorsBlockingStub DblockingStub;
+    private OccupancyGrpc.OccupancyBlockingStub OblockingStub;
+    
+    
     public BedClient() {
-        serviceType = "_bed._udp.local.";
-        name = "Bedroom";
+        serviceType = "Home._udp.local.";
+        name = "Home";
         jmDNSServiceTracker clientManager = jmDNSServiceTracker.getInstance();
         clientManager.register(this);
-        // java.awt.EventQueue.invokeLater(new Runnable() {
-        //     public void run() {
-        //         ui = new BedClientGUI(BedClient.this);
-        //         ui.setVisible(true);
-        //     }
-        // });
-        serviceAdded(new ServiceDescription("34.241.178.93", 50021));
+        serviceAdded(new ServiceDescription("127.0.0.1", 50021));
+        LightsServiceAdded(new ServiceDescription("127.0.0.1", 8080));
     }
 
     String getServiceType() {
@@ -65,6 +68,16 @@ public class BedClient implements ServiceObserver {
         blockingStub = BedGrpc.newBlockingStub(channel);
         warm();
     }
+    
+    public void LightsServiceAdded(ServiceDescription service) {
+        System.out.println("service added");
+        current = service;
+        channel = ManagedChannelBuilder.forAddress(service.getAddress(), service.getPort())
+                .usePlaintext(true)
+                .build();
+        DblockingStub = doorsGrpc.newBlockingStub(channel);
+        doors();
+    }
 
     public boolean interested(String type) {
         return serviceType.equals(type);
@@ -78,9 +91,6 @@ public class BedClient implements ServiceObserver {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    /**
-     * Say hello to server.
-     */
     public void warm() {
         try {
 
@@ -97,12 +107,20 @@ public class BedClient implements ServiceObserver {
 
             Empty request = Empty.newBuilder().build();
             BedStatus status = blockingStub.getStatus(request);
-            System.out.println("Hello " + status);
+            System.out.println(status);
 
         } catch (RuntimeException e) {
             logger.log(Level.WARNING, "RPC failed", e);
             return;
         }
+    }
+    
+    
+    public void doors(){
+        LockRequest req = LockRequest.newBuilder().build();
+        LockResponse response = DblockingStub.locks(req);
+                        
+        System.out.println(response.getReply());
     }
 
     public void switchService(String name) {
@@ -114,3 +132,4 @@ public class BedClient implements ServiceObserver {
     }
 
 }
+

@@ -17,3 +17,5 @@ service Bed {
 message BedStatus {
   int32 percentageHeated = 1;
 }
+
+

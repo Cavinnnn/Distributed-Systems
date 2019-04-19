@@ -14,9 +14,6 @@ import org.dominic.example.bed.BedStatus;
 import serviceui.Printer;
 import serviceui.ServiceUI;
 
-/**
- * Server that manages startup/shutdown of a {@code Greeter} server.
- */
 public class BedServer {
 
     private static final Logger logger = Logger.getLogger(BedServer.class.getName());
@@ -30,7 +27,7 @@ public class BedServer {
                 .addService(new BedImpl())
                 .build()
                 .start();
-        JmDNSRegistrationHelper helper = new JmDNSRegistrationHelper("Dominics", "_bed._udp.local.", "", port);
+        JmDNSRegistrationHelper helper = new JmDNSRegistrationHelper("Cavin's", "_rads._udp.local.", "", port);
         logger.info("Server started, listening on " + port);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -73,8 +70,8 @@ public class BedServer {
         private int percentHot = 0;
 
         public BedImpl() {
-            String name = "Dominic's";
-            String serviceType = "_bed._udp.local.";
+            String name = "Cavin's";
+            String serviceType = "_rads._udp.local.";
         }
 
         @Override
@@ -82,15 +79,20 @@ public class BedServer {
                 io.grpc.stub.StreamObserver<org.dominic.example.bed.BedStatus> responseObserver) {
             Timer t = new Timer();
             t.schedule(new RemindTask(responseObserver), 0, 2000);
-
         }
 
+        
+        //heat water
         @Override
         public void getStatus(com.google.protobuf.Empty request,
                 io.grpc.stub.StreamObserver<org.dominic.example.bed.BedStatus> responseObserver) {
             responseObserver.onNext(BedStatus.newBuilder().setPercentageHeated(percentHot).build());
             responseObserver.onCompleted();
         }
+        
+        
+        //stream rad heat
+        
 
         class RemindTask extends TimerTask {
 
