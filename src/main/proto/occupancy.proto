@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package occupancy;
+
+option java_multiple_files = true;
+option java_package = "org.dominic.example.occupancy";
+option java_outer_classname = "OccupancyProto";
+
+service Occupancy {
+    rpc IsOccupied(OccupancyRequest) returns (OccupancyResponse) {}
+}
+
+message OccupancyRequest {
+  bool value = 1;
+}
+
+message OccupancyResponse {
+  bool value = 1;
+}

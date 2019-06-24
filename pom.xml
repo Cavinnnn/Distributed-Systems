@@ -16,7 +16,7 @@
   
     <dependencies>
       
-        <dependency>
+         <dependency>
             <groupId>javax.jmdns</groupId>
             <artifactId>jmdns</artifactId>
             <version>3.4.1</version>
@@ -89,6 +89,7 @@
         </archive>
     </configuration>
 </plugin>
+
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>

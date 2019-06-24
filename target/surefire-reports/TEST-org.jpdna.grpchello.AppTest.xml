@@ -40,7 +40,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.detected.name" value="linux"/>
-    <property name="os.version" value="4.14.106-79.86.amzn1.x86_64"/>
+    <property name="os.version" value="4.14.109-80.92.amzn1.x86_64"/>
     <property name="library.jansi.path" value="/usr/share/apache-maven/lib/jansi-native"/>
     <property name="user.home" value="/home/ec2-user"/>
     <property name="user.timezone" value="UTC"/>

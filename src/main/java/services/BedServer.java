@@ -7,10 +7,9 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 import io.grpc.stub.StreamObserver;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import java.util.logging.Logger;
-import org.dominic.example.bed.BedGrpc;
-import org.dominic.example.bed.BedStatus;
+import org.dominic.example.CentralHeating.CentralHeatingGrpc;
+import org.dominic.example.CentralHeating.Status;
 import serviceui.Printer;
 import serviceui.ServiceUI;
 
@@ -24,7 +23,7 @@ public class BedServer {
 
     private void start() throws Exception {
         server = ServerBuilder.forPort(port)
-                .addService(new BedImpl())
+                .addService(new HeatingImpl())
                 .build()
                 .start();
         JmDNSRegistrationHelper helper = new JmDNSRegistrationHelper("Cavin's", "_rads._udp.local.", "", port);
@@ -65,18 +64,19 @@ public class BedServer {
         server.blockUntilShutdown();
     }
 
-    private class BedImpl extends BedGrpc.BedImplBase {
+    private class HeatingImpl extends CentralHeatingGrpc.CentralHeatingImplBase {
 
-        private int percentHot = 0;
+        private int boiler = 0;
+        private int rads = 0;
 
-        public BedImpl() {
+        public HeatingImpl() {
             String name = "Cavin's";
             String serviceType = "_rads._udp.local.";
         }
 
         @Override
         public void warm(com.google.protobuf.Empty request,
-                io.grpc.stub.StreamObserver<org.dominic.example.bed.BedStatus> responseObserver) {
+            io.grpc.stub.StreamObserver<org.dominic.example.CentralHeating.Status> responseObserver) {
             Timer t = new Timer();
             t.schedule(new RemindTask(responseObserver), 0, 2000);
         }
@@ -84,35 +84,47 @@ public class BedServer {
         
         //heat water
         @Override
-        public void getStatus(com.google.protobuf.Empty request,
-                io.grpc.stub.StreamObserver<org.dominic.example.bed.BedStatus> responseObserver) {
-            responseObserver.onNext(BedStatus.newBuilder().setPercentageHeated(percentHot).build());
+        public void boiler(com.google.protobuf.Empty request,
+            io.grpc.stub.StreamObserver<org.dominic.example.CentralHeating.Status> responseObserver) {
+            responseObserver.onNext(Status.newBuilder().setPercentageHeated(boiler).build());
             responseObserver.onCompleted();
         }
         
         
         //stream rad heat
-        
+        public void rads(com.google.protobuf.Empty request,
+            io.grpc.stub.StreamObserver<org.dominic.example.CentralHeating.Status> responseObserver) {
+            responseObserver.onNext(Status.newBuilder().setPercentageHeated(rads).build());
+            responseObserver.onCompleted();
+        }
 
         class RemindTask extends TimerTask {
 
-            StreamObserver<BedStatus> o;
+            StreamObserver<Status> o;
 
-            public RemindTask(StreamObserver<BedStatus> j) {
+            public RemindTask(StreamObserver<Status> j) {
                 o = j;
             }
-
-            @Override
+            
             public void run() {
-                if (percentHot < 100) {
-                    percentHot += 10;
-                    BedStatus status = BedStatus.newBuilder().setPercentageHeated(percentHot).build();
-                    o.onNext(status);
+                
+                if (boiler < 40) {
+                    boiler += 10;
+                    Status stat = Status.newBuilder().setPercentageHeated(boiler).build();
+                    o.onNext(stat);
+                } else if(rads < 35) {
+                    rads += 5;
+                    Status stat = Status.newBuilder().setPercentageHeated(rads).build();
+                    o.onNext(stat);
                 } else {
                     o.onCompleted();
                     this.cancel();
                 }
+                
+                
             }
+            
+            
         }
     }
 }

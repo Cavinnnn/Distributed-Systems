@@ -12,7 +12,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import java.util.logging.Logger;
-import org.dominic.example.bed.BedStatus;
 import services.JmDNSRegistrationHelper;
 
 public class RecommenderServer {

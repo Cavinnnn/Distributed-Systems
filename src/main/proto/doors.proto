@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package doors;
+
+option java_multiple_files = true;
+option java_package = "org.dominic.example.doors";
+option java_outer_classname = "DoorsProto";
+
+
+service doors {
+    rpc Locks(google.protobuf.Empty) returns (LockResponse) {}
+    rpc Scheduler(google.protobuf.Empty) returns (stream LockResponse) {}
+}
+
+message LockRequest {
+  string Request = 1;
+}
+
+message LockResponse {
+  string Reply = 1;
+}

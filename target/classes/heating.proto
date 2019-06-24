@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package CentralHeating;
+
+option java_multiple_files = true;
+option java_package = "org.dominic.example.CentralHeating";
+option java_outer_classname = "CentralHeatingProto";
+
+// The greeting service definition.
+service CentralHeating {
+    rpc Warm(google.protobuf.Empty) returns (stream Status) {}
+    rpc Boiler(google.protobuf.Empty) returns (Status) {}
+    rpc Rads(google.protobuf.Empty) returns (Status) {}
+}
+
+message Status {
+  int32 percentageHeated = 1;
+}
+
+
